@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    // Adicione este bloco de configuração
+    // bloco de configuração do postgres
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
