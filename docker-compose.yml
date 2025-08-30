@@ -1,0 +1,51 @@
+
+
+services:
+  # Serviço da nossa API NestJS
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development # Usamos o estágio de 'development' para ter o código fonte
+    container_name: api-cybersec-project
+    # Mapeia a porta 3000 do contêiner para a porta 3000 da sua máquina
+    ports:
+      - "3000:3000"
+    # Monta um volume para refletir as alterações do seu código em tempo real
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules # Garante que o node_modules do contêiner seja usado
+    # Configura o comando para rodar em modo de desenvolvimento (com hot-reload)
+    command: npm run start:dev
+    # Define as variáveis de ambiente para a API
+    environment:
+      - DB_HOST=db
+      - DB_TYPE=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=admin
+      - DB_DATABASE=cybersec_project_db
+    # Define que este serviço só deve iniciar depois que o serviço 'db' estiver pronto
+    depends_on:
+      - db
+
+  # Serviço do Banco de Dados PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: db-cybersec-project
+    # Variáveis de ambiente para configurar o banco de dados
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=cybersec_project_db
+    # Mapeia a porta 5432 do contêiner para a 5432 da sua máquina
+    ports:
+      - "5432:5432"
+    # Cria um volume para persistir os dados do banco
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+# Define o volume nomeado para a persistência dos dados
+volumes:
+  pgdata:
+
