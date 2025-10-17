@@ -2,13 +2,16 @@
     FROM node:18-alpine AS development
 
     WORKDIR /usr/src/app
-    
+
+    # instalar o openssl
+    RUN apk add --no-cache openssl
     # Copia package.json e pnpm-lock.yaml
     COPY package.json pnpm-lock.yaml ./
     
     # Define o diretório de store do pnpm (para evitar conflitos)
     ENV PNPM_HOME=/usr/src/app/.pnpm-store
     ENV PATH=$PNPM_HOME:$PATH
+    RUN apk update && apk add git
     RUN npm install -g pnpm && pnpm config set store-dir .pnpm-store
     
     # Instala dependências
