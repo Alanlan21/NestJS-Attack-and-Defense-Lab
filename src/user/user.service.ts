@@ -18,7 +18,7 @@ export class UsersService {
    * Cria um novo usuário após verificar unicidade e aplicar hash na senha
    */
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { email, password, role } = createUserDto;
+    const { email, name, password, role } = createUserDto;
 
     // Verifica se o email já está em uso
     const existingUser = await this.userRepository.findOne({ where: { email } });
@@ -37,6 +37,7 @@ export class UsersService {
     // Cria o objeto User para salvar
     const user = this.userRepository.create({
       email,
+      name,
       password: hashedPassword,
       role: role ?? UserRole.USER,
     });
