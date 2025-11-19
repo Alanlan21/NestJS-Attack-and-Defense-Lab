@@ -1,120 +1,263 @@
-# AAA Security Project with Controlled Attacks
-Projeto focado em construir uma API REST segura com NestJS, implementando de forma prática os três pilares da segurança da informação (AAA): Authentication, Authorization e Accountability.
+# 🛡️ NestJS Attack & Defense Lab with SOC
 
-Além de oferecer um CRUD completo de usuários, a API foi desenhada para validar suas defesas contra ataques controlados, observando como a arquitetura reage para detectar, bloquear e registrar atividades maliciosas.
+> **Projeto Acadêmico de Cibersegurança baseado no CyBOK**
+>
+> Laboratório completo de Segurança Ofensiva (Red Team) e Defensiva (Blue Team) com foco em **Malware & Attack Technologies** e **Security Operations & Incident Management**.
 
-## ✨ Principais recursos
-- Autenticação via JWT com algoritmo RS256 (chaves pública/privada).
-- Autorização baseada em perfis de acesso (`admin`, `user`).
-- Accountability (auditoria) com logging detalhado de ações críticas (logins, falhas, alterações, bloqueios).
-- Validação de entrada rigorosa para reduzir superfícies de ataque.
-- CRUD completo de usuários: cadastro, login, listagem, edição e remoção.
+---
 
-## ⚔️ Ataques controlados planejados
-O sistema é preparado para ser testado diante de cenários comuns:
-- **Brute Force**: tentativas massivas de login com Hydra.
-- **SQL Injection**: exploração de entradas utilizando sqlmap.
-- **Token Manipulation**: adulteração de payload/assinatura JWT com jwt_tool.
+## 📋 Visão Geral
+
+Este projeto implementa um **Security Operations Center (SOC) em miniatura** integrado a uma API REST segura, demonstrando na prática:
+
+### 🔴 **Red Team (Offensive Security)**
+
+- Scripts de ataque automatizados (Brute Force, SQL Injection, XSS)
+- Técnicas de evasão de defesas
+- Honeypots para engenharia reversa de atacantes
+
+### 🔵 **Blue Team (Defensive Security)**
+
+- **WAF** (Web Application Firewall) com pattern matching
+- **IDS/IPS** (Intrusion Detection/Prevention System)
+- **Threat Intelligence** com scoring dinâmico de IPs
+- **SOC Dashboard** para monitoramento em tempo real
+- **Resposta Automatizada** a incidentes
+
+---
+
+## ✨ Principais Recursos
+
+### Segurança (AAA + Defense in Depth)
+
+- ✅ **Authentication:** JWT com RS256 (chaves pública/privada)
+- ✅ **Authorization:** RBAC (Role-Based Access Control)
+- ✅ **Accountability:** Logging detalhado de eventos de segurança
+- ✅ **WAF:** Bloqueio automático de requisições maliciosas
+- ✅ **IDS/IPS:** Detecção e prevenção de intrusões
+- ✅ **Threat Intelligence:** Scoring de IPs maliciosos
+- ✅ **Honeypots:** Endpoints falsos para coletar inteligência
+
+### Detecção de Ataques
+
+- 🛡️ **SQL Injection** (union, boolean, time-based, error-based)
+- 🛡️ **Cross-Site Scripting (XSS)**
+- 🛡️ **Path Traversal**
+- 🛡️ **Brute Force**
+- 🛡️ **Rate Limiting Abuse**
+- 🛡️ **Token Manipulation**
+
+### Monitoramento e Resposta
+
+- 📊 **Dashboard de Segurança** (métricas em tempo real)
+- 🚨 **Alertas Automáticos** baseados em threat level
+- 🔒 **Auto-blocking** de IPs com score crítico
+- 📈 **Threat Scoring** com decay automático
+- 📋 **Relatórios de Incidentes**
+
+---
+
+## 🏗️ Arquitetura
+
+```
+┌─────────────┐
+│  Attacker   │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────────────────────┐
+│         WAF Middleware              │
+│  • Pattern Matching                 │
+│  • IP Blocklist Check               │
+│  • Rate Limiting                    │
+└──────┬──────────────────────────────┘
+       │ (clean) ──────► [Application]
+       │
+       │ (malicious)
+       ▼
+┌─────────────────────────────────────┐
+│      Detection Service              │
+│  • SQL Injection Detection          │
+│  • XSS Detection                    │
+│  • Path Traversal Detection         │
+└──────┬──────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────┐
+│    Threat Intelligence              │
+│  • Threat Scoring                   │
+│  • Auto-blocking (score >= 100)     │
+│  • Score Decay (10%/day)            │
+└──────┬──────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────┐
+│    Security Events DB               │
+│  • Event Logging                    │
+│  • Threat Actors                    │
+│  • IP Blocklist                     │
+└─────────────────────────────────────┘
+```
+
+---
+
+## ⚔️ Vetores de Ataque Implementados
+
+O sistema pode ser testado contra:
+
+| Tipo de Ataque         | Script             | Detecção | Bloqueio       |
+| ---------------------- | ------------------ | -------- | -------------- |
+| **Brute Force**        | `brute-force.py`   | ✅       | ✅             |
+| **SQL Injection**      | `sql-injection.py` | ✅       | ✅             |
+| **XSS**                | `sql-injection.py` | ✅       | ✅             |
+| **Path Traversal**     | Manual             | ✅       | ✅             |
+| **Token Manipulation** | `jwt_tool`         | ✅       | ✅             |
+| **Honeypot Access**    | Qualquer tool      | ✅       | ⚠️ (logs only) |
+
+---
 
 ## 🧰 Pré-requisitos
-- Node.js 18+ e PNPM instalados na máquina (`npm install -g pnpm`).
-- PostgreSQL 13+ acessível (local ou container).
-- OpenSSL (ou ferramenta equivalente) para geração das chaves RSA.
-- Docker (opcional) caso prefira executar a aplicação em container.
 
-## ⚙️ Configuração inicial
-1. **Clonar o repositório**
-   ```bash
-   git clone <https://github.com/Alanlan21/NestJS-Attack-and-Defense-Lab.git>
-   cd cybersec
-   ```
+### Backend
 
-2. **Instalar dependências**
-   ```bash
-   pnpm install
-   ```
+- Node.js 18+ e PNPM instalados (`npm install -g pnpm`)
+- PostgreSQL 13+ (local ou Docker)
+- OpenSSL (para geração de chaves RSA)
 
-3. **Configurar variáveis de ambiente**  
-   Copie o arquivo `.env` fornecido ou crie um novo a partir do template abaixo:
-   ```env
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_USERNAME=postgres
-   DB_PASSWORD=admin
-   DB_DATABASE=cybersec_project_db
+### Scripts de Ataque (Opcional)
 
-   JWT_PRIVATE_KEY_PATH=keys/private.pem
-   JWT_PUBLIC_KEY_PATH=keys/public.pem
-   JWT_EXPIRATION_TIME=1h
-   ```
-   Ajuste os valores conforme seu ambiente (principalmente as credenciais do banco).
+- Python 3.8+
+- Biblioteca `requests`: `pip install requests`
 
-4. **Gerar chaves RSA**  
-   Caso ainda não existam chaves, crie-as no diretório `keys/` (respeitando os caminhos utilizados no `.env`):
-   ```bash
-   mkdir -p keys
-   openssl genrsa -out keys/private.pem 2048
-   openssl rsa -in keys/private.pem -pubout -out keys/public.pem
-   ```
-   > Em ambientes onde não seja viável montar arquivos, você pode definir `JWT_PRIVATE_KEY` e `JWT_PUBLIC_KEY` diretamente no `.env` (com quebras de linha escapadas).
+---
 
-5. **Criar o banco de dados**  
-   Garanta que o banco apontado no `.env` exista e esteja acessível. Em desenvolvimento o TypeORM está com `synchronize` habilitado, portanto as tabelas serão criadas automaticamente no primeiro start.
+## 🚀 Quick Start
 
-## 🚀 Executando a API em desenvolvimento
-1. Suba o PostgreSQL localmente ou via container (exemplo com Docker):
-   ```bash
-   docker run --name cybersec-db -e POSTGRES_USER=postgres \
-     -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=cybersec_project_db \
-     -p 5432:5432 -d postgres:16
-   ```
-
-2. Execute a aplicação em modo watch:
-   ```bash
-   pnpm run start:dev
-   ```
-   A API ficará disponível em `http://localhost:3000`.
-
-## 👤 Criando o administrador inicial
-Use o script `bootstrap-admin` para registrar um usuário administrador sem passar pelo fluxo de cadastro:
 ```bash
-INITIAL_ADMIN_EMAIL=admin@example.com \
-INITIAL_ADMIN_PASSWORD=SenhaForte123! \
-pnpm run bootstrap:admin
+# 1. Clone e instale
+git clone https://github.com/Alanlan21/NestJS-Attack-and-Defense-Lab.git
+cd NestJS-Attack-and-Defense-Lab
+pnpm install
+
+# 2. Configure .env (copie de .env.example)
+cp .env.example .env
+
+# 3. Gere chaves RSA
+mkdir keys
+openssl genrsa -out keys/private.pem 2048
+openssl rsa -in keys/private.pem -pubout -out keys/public.pem
+
+# 4. Suba o banco
+docker run --name cybersec-db -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=cybersec_project_db -p 5432:5432 -d postgres:16
+
+# 5. Inicie a API
+pnpm start:dev
+
+# 6. Crie admin (em outro terminal)
+INITIAL_ADMIN_EMAIL=admin@example.com INITIAL_ADMIN_PASSWORD=Admin@123456 pnpm run bootstrap:admin
 ```
-O script é idempotente: ao rodá-lo novamente com o mesmo e-mail, nada será recriado.
 
-## 🧪 Testes
-- Testes unitários/integrados: `pnpm run test`
-- Watch mode: `pnpm run test:watch`
-- Cobertura: `pnpm run test:cov`
+**Variáveis importantes no `.env`:**
 
-## 📦 Build e produção
-1. Gerar artefatos compilados:
-   ```bash
-   pnpm run build
-   ```
-2. Executar a versão compilada:
-   ```bash
-   pnpm run start:prod
-   ```
+- `WAF_MODE=test` - Apenas loga ataques (use `production` para bloqueio real)
+- `DB_PASSWORD=admin` - Senha do PostgreSQL
+- `JWT_EXPIRATION_TIME=1h` - Validade do token
 
-## 🐳 Executando via Docker
-1. Construa a imagem:
-   ```bash
-   docker build -t cybersec-api .
-   ```
-2. Rode o container (certifique-se de apontar `DB_HOST` para o endereço correto do Postgres):
-   ```bash
-   docker run --env-file .env \
-     -p 3000:3000 \
-     --name cybersec-api \
-     cybersec-api
-   ```
-   > Em produção, recomenda-se montar ou injetar as chaves RSA via variáveis de ambiente seguras.
+---
 
-## 🛠️ Stack técnica
-- **Backend**: NestJS + TypeORM
-- **Banco**: PostgreSQL
-- **Autenticação**: JWT (RS256)
-- **Ambiente**: Node 18 / Docker
+## 🧪 Testando o Sistema
+
+**Scripts Python:**
+
+```bash
+# SQL Injection
+python scripts/attacks/sql-injection.py --target login
+
+# Brute Force
+python scripts/attacks/brute-force.py --email admin@example.com
+```
+
+**Via curl:**
+
+```bash
+# Teste SQL Injection
+curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"email":"admin'\'' OR 1=1--","password":"test"}'
+
+# Honeypot
+curl http://localhost:3000/admin
+
+# Dashboard (requer token admin)
+curl http://localhost:3000/monitoring/dashboard -H "Authorization: Bearer <token>"
+```
+
+
+
+## 🛡️ Como Funciona
+
+**Threat Scoring:**
+
+```
+SQL_INJECTION: 25 pts | XSS: 20 pts | BRUTE_FORCE: 10 pts
+Score >= 100 → Auto-block
+Decay: -10%/dia (cron job)
+```
+
+**Detection Patterns:**
+
+- SQL: `' OR 1=1`, `UNION SELECT`, `DROP TABLE`
+- XSS: `<script>`, `javascript:`, `onerror=`
+- Path Traversal: `../`, `%2e%2e/`
+
+**Request Flow:**
+
+```
+Cliente → WAF → Detection → Threat Intel → App
+          ↓       ↓            ↓
+       Block   Log Event   Auto-block
+```
+
+---
+
+## 📚 Documentação Completa
+
+Para arquitetura detalhada, algoritmos e uso avançado:
+
+📄 **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Documentação técnica completa  
+🎯 **[APRESENTACAO.md](./APRESENTACAO.md)** - Roteiro de apresentação do projeto
+
+---
+
+## 🛠️ Stack Técnica
+
+**Backend:** NestJS 10 • TypeORM • PostgreSQL 16 • JWT RS256  
+**Security:** Custom WAF • Pattern Matching IDS • Threat Intelligence  
+**Tools:** Python 3 • Docker • OpenSSL
+
+---
+
+## 🔒 Avisos Importantes
+
+⚠️ **Projeto educacional** - Não use em produção sem hardening adicional  
+⚠️ **Scripts de ataque** - Apenas em ambientes autorizados  
+⚠️ **CyBOK compliance** - Foco em Malware & Attack Technologies + Security Operations
+
+**Melhorias para produção:**
+
+- Rate limiting com Redis
+- SIEM real (ELK/Splunk)
+- ML para anomalias
+- Threat feeds externos
+- MFA + HTTPS obrigatório
+
+---
+
+## 📖 Referências
+
+- [CyBOK](https://www.cybok.org/) - Cyber Security Body of Knowledge
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - Vulnerabilidades web
+- [MITRE ATT&CK](https://attack.mitre.org/) - Tactics & Techniques
+- [NestJS Security](https://docs.nestjs.com/security/) - Framework security best practices
+
+---
+
+
