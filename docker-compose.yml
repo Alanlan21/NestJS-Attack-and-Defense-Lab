@@ -1,23 +1,18 @@
-
-
 services:
   # Serviço da nossa API NestJS
   api:
     build:
       context: .
       dockerfile: Dockerfile
-      target: development # Usamos o estágio de 'development' para ter o código fonte
+      target: development
     container_name: api-cybersec-project
-    # Mapeia a porta 3000 do contêiner para a porta 3000 da sua máquina
     ports:
-      - "3000:3000"
-    # Monta um volume para refletir as alterações do seu código em tempo real
+      - '3000:3000'
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules # Garante que o node_modules do contêiner seja usado
-    # Configura o comando para rodar em modo de desenvolvimento (com hot-reload)
+      - /usr/src/app/node_modules
+      - ./keys:/usr/src/app/keys
     command: npm run start:dev
-    # Define as variáveis de ambiente para a API
     environment:
       - DB_HOST=db
       - DB_TYPE=postgres
@@ -25,13 +20,30 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=admin
       - DB_DATABASE=cybersec_project_db
-    # Define que este serviço só deve iniciar depois que o serviço 'db' estiver pronto
+      - JWT_PRIVATE_KEY_PATH=keys/private.pem
+      - JWT_PUBLIC_KEY_PATH=keys/public.pem
+      - WAF_MODE=test
+      - CORS_ORIGIN=http://localhost:5173
     depends_on:
       - db
 
+  # Serviço do Frontend React
+  frontend:
+    image: node:18-alpine
+    container_name: frontend-cybersec-project
+    working_dir: /app
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev -- --host"
+    depends_on:
+      - api
+
   # Serviço do Banco de Dados PostgreSQL
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: db-cybersec-project
     # Variáveis de ambiente para configurar o banco de dados
     environment:
@@ -40,7 +52,7 @@ services:
       - POSTGRES_DB=cybersec_project_db
     # Mapeia a porta 5432 do contêiner para a 5432 da sua máquina
     ports:
-      - "5432:5432"
+      - '5432:5432'
     # Cria um volume para persistir os dados do banco
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -48,4 +60,3 @@ services:
 # Define o volume nomeado para a persistência dos dados
 volumes:
   pgdata:
-

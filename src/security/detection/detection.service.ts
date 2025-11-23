@@ -255,4 +255,12 @@ export class DetectionService {
   async markAsFalsePositive(eventId: string): Promise<void> {
     await this.securityEventRepo.update(eventId, { falsePositive: true });
   }
+
+  /**
+   * Limpa todos os eventos (apenas para demonstração)
+   */
+  async clearAllEvents(): Promise<number> {
+    const result = await this.securityEventRepo.delete({});
+    return result.affected || 0;
+  }
 }

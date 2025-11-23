@@ -10,10 +10,12 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { loadAsymmetricKey } from './utils/key-loader';
+import { SecurityModule } from '../security/security.module';
 
 @Module({
   imports: [
     UsersModule,
+    SecurityModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     ConfigModule,
     JwtModule.registerAsync({

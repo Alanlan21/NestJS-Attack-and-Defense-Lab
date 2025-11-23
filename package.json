@@ -10,6 +10,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "bootstrap:admin": "ts-node -r tsconfig-paths/register scripts/bootstrap-admin.ts",
+    "bootstrap:user": "ts-node -r tsconfig-paths/register scripts/create-regular-user.ts",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",

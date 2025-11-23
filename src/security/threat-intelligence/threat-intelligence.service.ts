@@ -243,4 +243,20 @@ export class ThreatIntelligenceService {
 
     this.logger.log(`Decayed threat scores for ${actors.length} actors`);
   }
+
+  /**
+   * Limpa todos os threat actors (apenas para demonstração)
+   */
+  async clearAllThreats(): Promise<number> {
+    const result = await this.threatActorRepo.delete({});
+    return result.affected || 0;
+  }
+
+  /**
+   * Limpa toda a blocklist (apenas para demonstração)
+   */
+  async clearBlocklist(): Promise<number> {
+    const result = await this.blocklistRepo.delete({});
+    return result.affected || 0;
+  }
 }

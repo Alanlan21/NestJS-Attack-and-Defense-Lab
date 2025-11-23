@@ -1,3 +1,5 @@
 export enum UserRole {
   ADMIN = 'admin',
-  USER = 'user',}
+  USER = 'user',
+  ANALYST = 'analyst', // Novo role com acesso ao SOC
+}

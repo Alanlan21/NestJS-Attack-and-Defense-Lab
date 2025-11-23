@@ -105,14 +105,15 @@ Este projeto implementa um **Security Operations Center (SOC) em miniatura** int
 
 O sistema pode ser testado contra:
 
-| Tipo de Ataque         | Script             | Detecção | Bloqueio       |
-| ---------------------- | ------------------ | -------- | -------------- |
-| **Brute Force**        | `brute-force.py`   | ✅       | ✅             |
-| **SQL Injection**      | `sql-injection.py` | ✅       | ✅             |
-| **XSS**                | `sql-injection.py` | ✅       | ✅             |
-| **Path Traversal**     | Manual             | ✅       | ✅             |
-| **Token Manipulation** | `jwt_tool`         | ✅       | ✅             |
-| **Honeypot Access**    | Qualquer tool      | ✅       | ⚠️ (logs only) |
+| Tipo de Ataque         | Script                         | Detecção | Bloqueio  |
+| ---------------------- | ------------------------------ | -------- | --------- |
+| **Brute Force**        | `brute-force.py`               | ✅       | ✅        |
+| **SQL Injection**      | `sql-injection.py`             | ✅       | ✅        |
+| **XSS**                | `xss-attack.py`                | ✅       | ✅        |
+| **Path Traversal**     | `path-traversal.py`            | ✅       | ✅        |
+| **Multi-IP Attack**    | `multi-ip-attack.py`           | ✅       | ✅        |
+| **Token Manipulation** | Manual (DevTools)              | ✅       | ✅        |
+| **Honeypot Access**    | Endpoints `/admin` `/wp-admin` | ✅       | ⚠️ (logs) |
 
 ---
 
@@ -133,64 +134,82 @@ O sistema pode ser testado contra:
 
 ## 🚀 Quick Start
 
+**Setup completo em:** 📄 **[SETUP.md](./SETUP.md)** - Guia passo-a-passo detalhado
+
 ```bash
 # 1. Clone e instale
 git clone https://github.com/Alanlan21/NestJS-Attack-and-Defense-Lab.git
 cd NestJS-Attack-and-Defense-Lab
 pnpm install
 
-# 2. Configure .env (copie de .env.example)
+# 2. Configure .env
 cp .env.example .env
 
-# 3. Gere chaves RSA
+# 3. Gere chaves JWT
 mkdir keys
 openssl genrsa -out keys/private.pem 2048
 openssl rsa -in keys/private.pem -pubout -out keys/public.pem
 
-# 4. Suba o banco
+# 4. Inicie PostgreSQL
 docker run --name cybersec-db -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=cybersec_project_db -p 5432:5432 -d postgres:16
 
-# 5. Inicie a API
+# 5. Inicie backend
 pnpm start:dev
 
-# 6. Crie admin (em outro terminal)
-INITIAL_ADMIN_EMAIL=admin@example.com INITIAL_ADMIN_PASSWORD=Admin@123456 pnpm run bootstrap:admin
+# 6. Crie admin (novo terminal)
+pnpm run bootstrap:admin
+
+# 7. Inicie frontend (novo terminal)
+cd frontend
+npm install
+npm run dev
+# Acesse: http://localhost:5173
+# Login: admin@example.com / Admin@123456
 ```
-
-**Variáveis importantes no `.env`:**
-
-- `WAF_MODE=test` - Apenas loga ataques (use `production` para bloqueio real)
-- `DB_PASSWORD=admin` - Senha do PostgreSQL
-- `JWT_EXPIRATION_TIME=1h` - Validade do token
 
 ---
 
 ## 🧪 Testando o Sistema
 
-**Scripts Python:**
+### Frontend (SOC Dashboard)
 
 ```bash
-# SQL Injection
-python scripts/attacks/sql-injection.py --target login
-
-# Brute Force
-python scripts/attacks/brute-force.py --email admin@example.com
+cd frontend
+npm install
+npm run dev
+# Acesse: http://localhost:5173
+# Login: admin@example.com / Admin@123456
 ```
 
-**Via curl:**
+**Funcionalidades:**
+
+- 📊 Métricas em tempo real (total events, blocked, timeline)
+- 🎯 Top 5 Threat Actors com scoring
+- 🔴 Live Events (últimos 10 eventos)
+- 📈 Attack Timeline (gráfico de 60 minutos)
+- 🗑️ Reset Demo (limpa todos os dados)
+- 🔍 Detalhes de Ataque (modal com payload completo)
+
+### Scripts de Ataque
 
 ```bash
-# Teste SQL Injection
-curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"email":"admin'\'' OR 1=1--","password":"test"}'
+cd scripts/attacks
 
-# Honeypot
-curl http://localhost:3000/admin
+# SQL Injection (múltiplos payloads)
+python sql-injection.py
 
-# Dashboard (requer token admin)
-curl http://localhost:3000/monitoring/dashboard -H "Authorization: Bearer <token>"
+# XSS (refletido e stored)
+python xss-attack.py
+
+# Path Traversal (arquivos sensíveis)
+python path-traversal.py
+
+# Brute Force (50 senhas, continua após sucesso)
+python brute-force.py
+
+# Multi-IP (simula X-Forwarded-For)
+python multi-ip-attack.py
 ```
-
-
 
 ## 🛡️ Como Funciona
 
@@ -220,8 +239,7 @@ Cliente → WAF → Detection → Threat Intel → App
 
 ## 📚 Documentação Completa
 
-Para arquitetura detalhada, algoritmos e uso avançado:
-
+📄 **[SETUP.md](./SETUP.md)** - Guia de instalação passo-a-passo com troubleshooting  
 📄 **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Documentação técnica completa  
 🎯 **[APRESENTACAO.md](./APRESENTACAO.md)** - Roteiro de apresentação do projeto
 
@@ -230,24 +248,9 @@ Para arquitetura detalhada, algoritmos e uso avançado:
 ## 🛠️ Stack Técnica
 
 **Backend:** NestJS 10 • TypeORM • PostgreSQL 16 • JWT RS256  
+**Frontend:** React 18 • Vite • Tailwind CSS • Recharts • Lucide Icons  
 **Security:** Custom WAF • Pattern Matching IDS • Threat Intelligence  
 **Tools:** Python 3 • Docker • OpenSSL
-
----
-
-## 🔒 Avisos Importantes
-
-⚠️ **Projeto educacional** - Não use em produção sem hardening adicional  
-⚠️ **Scripts de ataque** - Apenas em ambientes autorizados  
-⚠️ **CyBOK compliance** - Foco em Malware & Attack Technologies + Security Operations
-
-**Melhorias para produção:**
-
-- Rate limiting com Redis
-- SIEM real (ELK/Splunk)
-- ML para anomalias
-- Threat feeds externos
-- MFA + HTTPS obrigatório
 
 ---
 
@@ -256,8 +259,3 @@ Para arquitetura detalhada, algoritmos e uso avançado:
 - [CyBOK](https://www.cybok.org/) - Cyber Security Body of Knowledge
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/) - Vulnerabilidades web
 - [MITRE ATT&CK](https://attack.mitre.org/) - Tactics & Techniques
-- [NestJS Security](https://docs.nestjs.com/security/) - Framework security best practices
-
----
-
-
