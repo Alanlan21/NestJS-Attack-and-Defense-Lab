@@ -1,4 +1,4 @@
-# 🛡️ NestJS Attack & Defense Lab with SOC
+# 🛡️ NestJS Attack & Defense Lab
 
 > **Projeto Acadêmico de Cibersegurança baseado no CyBOK**
 >
