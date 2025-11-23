@@ -31,9 +31,9 @@ const AttackChart = ({ data, type = 'line' }) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-700/50 rounded-xl p-6 backdrop-blur-sm">
-      <h3 className="text-xl font-bold text-white mb-4">
-        Timeline de Ataques (24h)
+    <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-xl p-6 shadow-xl">
+      <h3 className="text-xl font-bold text-white mb-4 tracking-tight">
+        Atividade em Tempo Real (60min)
       </h3>
       <ResponsiveContainer width="100%" height={300}>
         {type === 'area' ? (
