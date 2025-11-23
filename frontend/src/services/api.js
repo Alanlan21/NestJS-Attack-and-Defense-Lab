@@ -10,6 +10,33 @@ const api = axios.create({
   },
 });
 
+// Interceptor para adicionar token JWT em todas as requisições
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+// Interceptor para tratar erros de autenticação
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expirado ou inválido - remover token
+      localStorage.removeItem('access_token');
+      // NÃO recarrega a página - deixa o AuthContext lidar com isso
+    }
+    return Promise.reject(error);
+  },
+);
+
 export const securityAPI = {
   /**
    * Busca métricas do dashboard
@@ -46,6 +73,19 @@ export const securityAPI = {
       return response.data;
     } catch (error) {
       console.error('Error logging in:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Reset dashboard (modo apresentação)
+   */
+  async resetDashboard() {
+    try {
+      const response = await api.delete('/monitoring/reset');
+      return response.data;
+    } catch (error) {
+      console.error('Error resetting dashboard:', error);
       throw error;
     }
   },

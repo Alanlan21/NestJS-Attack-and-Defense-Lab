@@ -8,7 +8,7 @@ import {
   Zap,
 } from 'lucide-react';
 
-const LiveEvents = ({ events }) => {
+const LiveEvents = ({ events, onEventClick }) => {
   const getEventIcon = (type) => {
     const icons = {
       SQL_INJECTION: Bug,
@@ -53,7 +53,8 @@ const LiveEvents = ({ events }) => {
             return (
               <div
                 key={index}
-                className={`border-l-4 ${getSeverityColor(event.severity)} p-4 rounded-r-lg hover:bg-white/5 transition-all duration-200 animate-fadeIn`}
+                onClick={() => onEventClick && onEventClick(event)}
+                className={`border-l-4 ${getSeverityColor(event.severity)} p-4 rounded-r-lg hover:bg-white/5 transition-all duration-200 animate-fadeIn cursor-pointer hover:scale-[1.02] hover:shadow-lg`}
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="flex items-start justify-between">
