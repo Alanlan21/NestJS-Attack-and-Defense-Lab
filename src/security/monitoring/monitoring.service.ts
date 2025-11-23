@@ -83,18 +83,35 @@ export class MonitoringService {
   private generateTimeline(
     events: any[],
   ): Array<{ hour: string; count: number }> {
-    const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const recentEvents = events.filter((e) => e.detectedAt >= last24Hours);
+    // Última 1 hora em intervalos de 5 minutos (12 pontos bem distribuídos)
+    const lastHour = new Date(Date.now() - 60 * 60 * 1000);
+    const recentEvents = events.filter((e) => e.detectedAt >= lastHour);
 
-    const hourlyCount: Record<string, number> = {};
+    // Inicializa intervalos de 5 minutos
+    const intervalCount: Record<string, number> = {};
+    const now = new Date();
 
+    for (let i = 0; i < 12; i++) {
+      const intervalDate = new Date(now.getTime() - i * 5 * 60 * 1000);
+      const hours = intervalDate.getHours().toString().padStart(2, '0');
+      const minutes = Math.floor(intervalDate.getMinutes() / 5) * 5;
+      const intervalKey = `${hours}:${minutes.toString().padStart(2, '0')}`;
+      intervalCount[intervalKey] = 0;
+    }
+
+    // Conta eventos por intervalo
     recentEvents.forEach((event) => {
-      const hour =
-        new Date(event.detectedAt).toISOString().slice(0, 13) + ':00';
-      hourlyCount[hour] = (hourlyCount[hour] || 0) + 1;
+      const eventDate = new Date(event.detectedAt);
+      const hours = eventDate.getHours().toString().padStart(2, '0');
+      const minutes = Math.floor(eventDate.getMinutes() / 5) * 5;
+      const intervalKey = `${hours}:${minutes.toString().padStart(2, '0')}`;
+
+      if (intervalCount[intervalKey] !== undefined) {
+        intervalCount[intervalKey]++;
+      }
     });
 
-    return Object.entries(hourlyCount)
+    return Object.entries(intervalCount)
       .map(([hour, count]) => ({ hour, count }))
       .sort((a, b) => a.hour.localeCompare(b.hour));
   }
@@ -115,6 +132,25 @@ export class MonitoringService {
           t.riskLevel === ThreatLevel.CRITICAL,
       ).length,
       timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Reset de dados para demonstração
+   * Limpa todos os eventos de segurança e threat actors
+   */
+  async resetDemoData(): Promise<{ message: string; cleared: any }> {
+    const eventsCleared = await this.detectionService.clearAllEvents();
+    const threatsCleared = await this.threatIntel.clearAllThreats();
+    const blocklistCleared = await this.threatIntel.clearBlocklist();
+
+    return {
+      message: 'Dashboard reset realizado com sucesso',
+      cleared: {
+        securityEvents: eventsCleared,
+        threatActors: threatsCleared,
+        blocklist: blocklistCleared,
+      },
     };
   }
 }
