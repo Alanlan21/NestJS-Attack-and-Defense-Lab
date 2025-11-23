@@ -288,8 +288,6 @@ Edite `sql-injection.py`:
 ```python
 SQL_INJECTION_PAYLOADS = [
     # ... payloads existentes ...
-
-    # Seus payloads customizados
     "' AND 1=2 UNION SELECT version()--",
     "admin'/**/OR/**/'1'='1",
 ]
@@ -302,66 +300,10 @@ Edite `brute-force.py`:
 ```python
 COMMON_PASSWORDS = [
     # ... senhas existentes ...
-
-    # Adicione suas senhas
     "minha_senha_custom",
     "teste123",
 ]
 ```
-
-### Criar Novo Script de Ataque
-
-Exemplo de script para testar XSS:
-
-```python
-import requests
-
-BASE_URL = "http://localhost:3000"
-
-XSS_PAYLOADS = [
-    "<script>alert('XSS')</script>",
-    "<img src=x onerror=alert('XSS')>",
-    "javascript:alert('XSS')",
-]
-
-for payload in XSS_PAYLOADS:
-    response = requests.post(
-        f"{BASE_URL}/users",
-        json={"name": payload, "email": "test@test.com", "password": "Test@123"},
-    )
-    print(f"Payload: {payload} | Status: {response.status_code}")
-```
-
----
-
-## ⚠️ Avisos Importantes
-
-### 🚫 NÃO FAÇA
-
-- ❌ Usar contra sistemas sem autorização
-- ❌ Usar em produção sem supervisão
-- ❌ Modificar para ataques reais maliciosos
-- ❌ Distribuir para uso não-autorizado
-
-### ✅ FAÇA
-
-- ✅ Usar apenas em ambiente de desenvolvimento/teste
-- ✅ Obter autorização antes de testar qualquer sistema
-- ✅ Documentar resultados para análise
-- ✅ Compartilhar descobertas com a equipe responsável
-- ✅ Respeitar leis e regulamentos de cibersegurança
-
----
-
-## 📚 Próximos Passos
-
-Após rodar os scripts:
-
-1. **Analise os logs** da aplicação
-2. **Verifique o dashboard** de monitoramento
-3. **Ajuste as regras** de detecção se necessário
-4. **Documente** falsos positivos/negativos
-5. **Melhore** os algoritmos de detecção
 
 ---
 
@@ -372,8 +314,8 @@ Após rodar os scripts:
 A API não está rodando. Inicie com:
 
 ```bash
-cd ..
-pnpm run start:dev
+cd ../..
+pnpm start:dev
 ```
 
 ### Erro: "ModuleNotFoundError: No module named 'requests'"
@@ -399,15 +341,3 @@ Verifique:
 1. WAF está ativo? (ver logs da aplicação)
 2. Patterns estão corretos? (ver `detection.service.ts`)
 3. Database está conectado? (ver logs do PostgreSQL)
-
----
-
-## 📖 Recursos Adicionais
-
-- **OWASP Testing Guide:** https://owasp.org/www-project-web-security-testing-guide/
-- **PayloadsAllTheThings:** https://github.com/swisskyrepo/PayloadsAllTheThings
-- **SQL Injection Cheat Sheet:** https://portswigger.net/web-security/sql-injection/cheat-sheet
-
----
-
-**Lembre-se: Com grandes poderes vêm grandes responsabilidades. Use estes scripts apenas para fins educacionais e com autorização apropriada! 🛡️**

