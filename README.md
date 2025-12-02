@@ -1,148 +1,174 @@
-# 🛡️ NestJS Attack & Defense Lab
+# 🛡️ CyberSec Lab - Attack & Defense Platform
 
-> **Projeto Acadêmico de Cibersegurança baseado no CyBOK**
->
-> Laboratório completo de Segurança Ofensiva (Red Team) e Defensiva (Blue Team) com foco em **Malware & Attack Technologies** e **Security Operations & Incident Management**.
+<div align="center">
 
----
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## 📋 Visão Geral
+**Full-stack Security Operations Center (SOC) demonstrando defesa multicamadas contra ataques reais**
 
-Este projeto implementa um **Security Operations Center (SOC) em miniatura** integrado a uma API REST segura, demonstrando na prática:
+[🎯 Demo](#-demonstração) • [🏗️ Arquitetura](#️-arquitetura) • [⚡ Quick Start](#-quick-start)
 
-### 🔴 **Red Team (Offensive Security)**
-
-- Scripts de ataque automatizados (Brute Force, SQL Injection, XSS)
-- Técnicas de evasão de defesas
-- Honeypots para engenharia reversa de atacantes
-
-### 🔵 **Blue Team (Defensive Security)**
-
-- **WAF** (Web Application Firewall) com pattern matching
-- **IDS/IPS** (Intrusion Detection/Prevention System)
-- **Threat Intelligence** com scoring dinâmico de IPs
-- **SOC Dashboard** para monitoramento em tempo real
-- **Resposta Automatizada** a incidentes
+</div>
 
 ---
 
-## ✨ Principais Recursos
+## 🎯 Sobre o Projeto
 
-### Segurança (AAA + Defense in Depth)
+Plataforma educacional de cibersegurança que implementa **Red Team vs Blue Team** em um ambiente controlado. Desenvolvido como projeto acadêmico baseado no **CyBOK** (Cyber Security Body of Knowledge), demonstra na prática:
 
-- ✅ **Authentication:** JWT com RS256 (chaves pública/privada)
-- ✅ **Authorization:** RBAC (Role-Based Access Control)
-- ✅ **Accountability:** Logging detalhado de eventos de segurança
-- ✅ **WAF:** Bloqueio automático de requisições maliciosas
-- ✅ **IDS/IPS:** Detecção e prevenção de intrusões
-- ✅ **Threat Intelligence:** Scoring de IPs maliciosos
-- ✅ **Honeypots:** Endpoints falsos para coletar inteligência
+- 🔴 **Offensive Security:** 136+ payloads reais de ataque
+- 🔵 **Defensive Security:** 7 camadas de proteção automatizada
+- 📊 **Security Operations:** SOC Dashboard em tempo real
+- 🤖 **Automated Response:** Sistema SOAR simplificado
 
-### Detecção de Ataques
+### 💡 Problema Resolvido
 
-- 🛡️ **SQL Injection** (union, boolean, time-based, error-based)
-- 🛡️ **Cross-Site Scripting (XSS)**
-- 🛡️ **Path Traversal**
-- 🛡️ **Brute Force**
-- 🛡️ **Rate Limiting Abuse**
-- 🛡️ **Token Manipulation**
+Aplicações web modernas enfrentam **milhares de tentativas de ataque diariamente**. Este projeto demonstra como implementar defesa em profundidade (Defense in Depth) com:
 
-### Monitoramento e Resposta
+- ✅ Detecção automática de 5 vetores de ataque comuns
+- ✅ Bloqueio inteligente baseado em scoring de ameaças
+- ✅ Monitoramento visual em tempo real
+- ✅ Resposta automatizada sem intervenção humana
 
-- 📊 **Dashboard de Segurança** (métricas em tempo real)
-- 🚨 **Alertas Automáticos** baseados em threat level
-- 🔒 **Auto-blocking** de IPs com score crítico
-- 📈 **Threat Scoring** com decay automático
-- 📋 **Relatórios de Incidentes**
+---
+
+## ✨ Destaques Técnicos
+
+### 🛡️ Security Features
+
+```typescript
+// Authentication: JWT RS256 (assinatura assimétrica)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.ADMIN, UserRole.ANALYST)
+async getDashboard() { ... }
+
+// Threat Intelligence: Scoring dinâmico
+if (threatScore >= 100) {
+  await this.blockIp(ip, 'AUTO_BLOCKED');
+}
+
+// Detection: 18 regex patterns com confidence scoring
+const confidence = (matches.length / totalPatterns) * 100;
+if (confidence >= 60) block();
+```
+
+### 📊 Métricas do Sistema
+
+| Categoria               | Implementação                              | Taxa de Sucesso              |
+| ----------------------- | ------------------------------------------ | ---------------------------- |
+| **SQL Injection**       | 29 payloads (Union, Boolean, Time-based)   | 100% bloqueio                |
+| **XSS**                 | 22 payloads (Reflected, Stored, DOM-based) | 70-80% bloqueio              |
+| **Path Traversal**      | 33 payloads (LFI, RFI, Command Injection)  | 90-100% bloqueio             |
+| **Brute Force**         | 52 senhas + rate limiting                  | Auto-block após 5 tentativas |
+| **Threat Intelligence** | Scoring dinâmico + decay 10%/dia           | ≥100pts = permanente block   |
+
+### 🎨 Frontend Dashboard
+
+- **Real-time Updates:** Polling a cada 5 segundos
+- **Visualizações:** Métricas, Timeline (60min), Top Threats, Live Events
+- **Interatividade:** Modal de detalhes, Reset Demo, Filtros
+- **Responsivo:** TailwindCSS + Recharts para gráficos
 
 ---
 
 ## 🏗️ Arquitetura
 
+**Defense in Depth:** 7 camadas redundantes garantem proteção mesmo se uma falhar
+
+### Fluxo de Defesa
+
 ```
-┌─────────────┐
-│  Attacker   │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────────────────┐
-│         WAF Middleware              │
-│  • Pattern Matching                 │
-│  • IP Blocklist Check               │
-│  • Rate Limiting                    │
-└──────┬──────────────────────────────┘
-       │ (clean) ──────► [Application]
-       │
-       │ (malicious)
-       ▼
-┌─────────────────────────────────────┐
-│      Detection Service              │
-│  • SQL Injection Detection          │
-│  • XSS Detection                    │
-│  • Path Traversal Detection         │
-└──────┬──────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────┐
-│    Threat Intelligence              │
-│  • Threat Scoring                   │
-│  • Auto-blocking (score >= 100)     │
-│  • Score Decay (10%/day)            │
-└──────┬──────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────┐
-│    Security Events DB               │
-│  • Event Logging                    │
-│  • Threat Actors                    │
-│  • IP Blocklist                     │
-└─────────────────────────────────────┘
+🎯 ATACANTE (136+ Payloads)
+        ↓
+┌─────────────────────────────────┐
+│  1️⃣ WAF MIDDLEWARE              │ ←──┐
+│  • Bloqueio: 90%                │    │ Consulta Blocklist
+│  • analyzeRequest()             │    │
+│  • isIpBlocked()                │    │
+└────────┬────────────────────────┘    │
+         │ Malicious                   │
+         ▼                              │
+┌─────────────────────────────────┐    │
+│  2️⃣ DETECTION SERVICE            │    │
+│  • 18 regex patterns            │    │
+│  • Confidence ≥60% → BLOCK      │    │
+│  • detectSQL() detectXSS()      │    │
+└────────┬────────────────────────┘    │
+         │ Report Attack               │
+         ▼                              │
+┌─────────────────────────────────┐    │
+│  3️⃣ THREAT INTELLIGENCE          │────┘
+│  • Scoring dinâmico             │ Update Blocklist
+│  • Score ≥100pts → AUTO-BLOCK   │
+│  • Decay -10%/dia               │
+└────────┬────────────────────────┘
+         │ Clean Request (<60% conf)
+         ▼
+┌─────────────────────────────────┐
+│  4️⃣ AUTH GUARDS                  │
+│  • JwtAuthGuard (token válido?) │
+│  • RolesGuard (permissão?)      │
+│  • RS256 validation             │
+└────────┬────────────────────────┘
+         │ Authorized
+         ▼
+┌─────────────────────────────────┐
+│  5️⃣ APPLICATION LOGIC            │
+│  • Controllers                  │
+│  • Services                     │
+│  • DTOs                         │
+└────────┬────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────┐
+│  6️⃣ DATABASE LAYER (PostgreSQL 16 + TypeORM)        │
+│  ┌──────────────┐ ┌──────────────┐ ┌─────────────┐ │
+│  │SecurityEvent │ │ ThreatActor  │ │IpBlocklist  │ │
+│  │• attackType  │ │• ipAddress   │ │• ip         │ │
+│  │• sourceIp    │ │• threatScore │ │• active     │ │
+│  │• blocked     │ │• isBlocked   │ │• expires    │ │
+│  └──────────────┘ └──────────────┘ └─────────────┘ │
+└─────────────────────────────────────────────────────┘
+
+      🍯 HONEYPOTS (lateral)
+      • /admin, /phpmyadmin
+      • /.env, /wp-admin
+      └─→ Injeta +5pts Threat Score
 ```
-
----
-
-## ⚔️ Vetores de Ataque Implementados
-
-O sistema pode ser testado contra:
-
-| Tipo de Ataque         | Script                         | Detecção | Bloqueio  |
-| ---------------------- | ------------------------------ | -------- | --------- |
-| **Brute Force**        | `brute-force.py`               | ✅       | ✅        |
-| **SQL Injection**      | `sql-injection.py`             | ✅       | ✅        |
-| **XSS**                | `xss-attack.py`                | ✅       | ✅        |
-| **Path Traversal**     | `path-traversal.py`            | ✅       | ✅        |
-| **Multi-IP Attack**    | `multi-ip-attack.py`           | ✅       | ✅        |
-| **Token Manipulation** | Manual (DevTools)              | ✅       | ✅        |
-| **Honeypot Access**    | Endpoints `/admin` `/wp-admin` | ✅       | ⚠️ (logs) |
-
----
-
-## 🧰 Pré-requisitos
-
-### Backend
-
-- Node.js 18+ e PNPM instalados (`npm install -g pnpm`)
-- PostgreSQL 13+ (local ou Docker)
-- OpenSSL (para geração de chaves RSA)
-
-### Scripts de Ataque (Opcional)
-
-- Python 3.8+
-- Biblioteca `requests`: `pip install requests`
 
 ---
 
 ## 🚀 Quick Start
 
-**Setup completo em:** 📄 **[SETUP.md](./SETUP.md)** - Guia passo-a-passo detalhado
+### Opção 1: Docker (Recomendado)
 
 ```bash
-# 1. Clone e instale
+git clone https://github.com/Alanlan21/NestJS-Attack-and-Defense-Lab.git
+cd NestJS-Attack-and-Defense-Lab
+
+# Inicia backend + frontend + database
+docker-compose up -d
+
+# Cria usuário admin
+docker exec -it cybersec-backend pnpm run bootstrap:admin
+
+# Acesse: http://localhost:5173
+# Login: admin@example.com / Admin@123456
+```
+
+### Opção 2: Local
+
+```bash
+# 1. Clone e instale dependências
 git clone https://github.com/Alanlan21/NestJS-Attack-and-Defense-Lab.git
 cd NestJS-Attack-and-Defense-Lab
 pnpm install
 
-# 2. Configure .env
+# 2. Configure ambiente
 cp .env.example .env
 
 # 3. Gere chaves JWT
@@ -150,112 +176,128 @@ mkdir keys
 openssl genrsa -out keys/private.pem 2048
 openssl rsa -in keys/private.pem -pubout -out keys/public.pem
 
-# 4. Inicie PostgreSQL
-docker run --name cybersec-db -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=cybersec_project_db -p 5432:5432 -d postgres:16
+# 4. PostgreSQL (Docker)
+docker run -d --name cybersec-db \
+  -e POSTGRES_PASSWORD=admin \
+  -e POSTGRES_DB=cybersec_project_db \
+  -p 5432:5432 postgres:16
 
 # 5. Inicie backend
 pnpm start:dev
 
-# 6. Crie admin (novo terminal)
-pnpm run bootstrap:admin
-
-# 7. Inicie frontend (novo terminal)
-cd frontend
-npm install
-npm run dev
-# Acesse: http://localhost:5173
-# Login: admin@example.com / Admin@123456
+# 6. Inicie frontend (novo terminal)
+cd frontend && npm install && npm run dev
 ```
 
 ---
 
-## 🧪 Testando o Sistema
+## 🧪 Demonstração
 
-### Frontend (SOC Dashboard)
+### 1️⃣ Login no Dashboard SOC
 
 ```bash
-cd frontend
-npm install
-npm run dev
 # Acesse: http://localhost:5173
-# Login: admin@example.com / Admin@123456
+# Credenciais: admin@example.com / Admin@123456
 ```
 
-**Funcionalidades:**
-
-- 📊 Métricas em tempo real (total events, blocked, timeline)
-- 🎯 Top 5 Threat Actors com scoring
-- 🔴 Live Events (últimos 10 eventos)
-- 📈 Attack Timeline (gráfico de 60 minutos)
-- 🗑️ Reset Demo (limpa todos os dados)
-- 🔍 Detalhes de Ataque (modal com payload completo)
-
-### Scripts de Ataque
+### 2️⃣ Execute Ataques Simulados
 
 ```bash
 cd scripts/attacks
 
-# SQL Injection (múltiplos payloads)
-python sql-injection.py
+# SQL Injection (29 payloads diferentes)
+python sql-injection.py --target login
 
-# XSS (refletido e stored)
-python xss-attack.py
-
-# Path Traversal (arquivos sensíveis)
-python path-traversal.py
-
-# Brute Force (50 senhas, continua após sucesso)
+# Brute Force (50 senhas comuns)
 python brute-force.py
 
-# Multi-IP (simula X-Forwarded-For)
-python multi-ip-attack.py
+# Multi-IP (ataque distribuído)
+python multi-ip-attack.py --mode distributed
 ```
 
-## 🛡️ Como Funciona
+### 3️⃣ Observe o Dashboard
 
-**Threat Scoring:**
-
-```
-SQL_INJECTION: 25 pts | XSS: 20 pts | BRUTE_FORCE: 10 pts
-Score >= 100 → Auto-block
-Decay: -10%/dia (cron job)
-```
-
-**Detection Patterns:**
-
-- SQL: `' OR 1=1`, `UNION SELECT`, `DROP TABLE`
-- XSS: `<script>`, `javascript:`, `onerror=`
-- Path Traversal: `../`, `%2e%2e/`
-
-**Request Flow:**
-
-```
-Cliente → WAF → Detection → Threat Intel → App
-          ↓       ↓            ↓
-       Block   Log Event   Auto-block
-```
+- 📊 **Métricas** sobem em tempo real
+- 📈 **Timeline** mostra picos de atividade
+- 🎯 **Top Threats** lista IPs maliciosos
+- 🔴 **Live Events** stream de tentativas bloqueadas
 
 ---
 
-## 📚 Documentação Completa
+## 🛠️ Stack Tecnológica
 
-📄 **[SETUP.md](./SETUP.md)** - Guia de instalação passo-a-passo com troubleshooting  
-📄 **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Documentação técnica completa  
-🎯 **[APRESENTACAO.md](./APRESENTACAO.md)** - Roteiro de apresentação do projeto
+### Backend
+
+- **Framework:** NestJS 10 (Node.js)
+- **Language:** TypeScript 5
+- **Database:** PostgreSQL 16 + TypeORM
+- **Auth:** JWT (RS256 - assinatura assimétrica)
+- **Security:** Custom WAF, Pattern Matching IDS, Threat Intelligence
+
+### Frontend
+
+- **Library:** React 18 + TypeScript
+- **Build Tool:** Vite 5
+- **Styling:** TailwindCSS 3
+- **Charts:** Recharts
+- **Icons:** Lucide React
+
+### DevOps
+
+- **Containerization:** Docker + Docker Compose
+- **Orchestration:** PNPM workspaces
+- **Testing:** Python 3 (attack scripts)
 
 ---
 
-## 🛠️ Stack Técnica
+## 📚 Conceitos Aplicados
 
-**Backend:** NestJS 10 • TypeORM • PostgreSQL 16 • JWT RS256  
-**Frontend:** React 18 • Vite • Tailwind CSS • Recharts • Lucide Icons  
-**Security:** Custom WAF • Pattern Matching IDS • Threat Intelligence  
-**Tools:** Python 3 • Docker • OpenSSL
+Este projeto implementa boas práticas recomendadas pelo **CyBOK** e **CISSP**:
+
+### AAA (Authentication, Authorization, Accountability)
+
+- ✅ **Authentication:** JWT RS256 stateless com bcrypt (10 salt rounds)
+- ✅ **Authorization:** RBAC com 3 roles (ADMIN, ANALYST, USER)
+- ✅ **Accountability:** Logging completo com timestamp, IP, payload, outcome
+
+### Defense in Depth
+
+- ✅ **Perimeter:** WAF + Rate Limiting
+- ✅ **Network:** IP Blocklist + Threat Intelligence
+- ✅ **Application:** Auth Guards + Input Validation
+- ✅ **Data:** PostgreSQL constraints + Prepared Statements
+- ✅ **Deception:** Honeypots (10+ endpoints falsos)
+
+### OWASP Top 10 Coverage
+
+- ✅ A01 - Broken Access Control (RBAC + Guards)
+- ✅ A02 - Cryptographic Failures (JWT RS256, bcrypt)
+- ✅ A03 - Injection (SQL, XSS, Path Traversal detection)
+- ✅ A05 - Security Misconfiguration (Environment variables)
+- ✅ A07 - Identification & Auth Failures (Brute force protection)
 
 ---
 
-## 📖 Referências
 
-- [CyBOK](https://www.cybok.org/) - Cyber Security Body of Knowledge
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - Vulnerabilidades web
-- [MITRE ATT&CK](https://attack.mitre.org/) - Tactics & Techniques
+## ⚠️ Aviso de Segurança
+
+**Este é um projeto EDUCACIONAL.**
+
+❌ **NÃO usar em produção sem:**
+
+- Gerar novas chaves JWT únicas
+- Configurar secrets em vault (não em .env)
+- Implementar rate limiting global
+- Adicionar HTTPS/TLS
+- Configurar CORS adequadamente
+- Revisar todas as credenciais
+
+---
+
+<div align="center">
+
+⭐ **Se este projeto te ajudou, considere dar uma estrela!** ⭐
+
+**Desenvolvido com** ❤️ **como parte da disciplina de Cybersegurança do curso de Análise e Desenvolvimento de Sistemas na UNIFOR**
+
+</div>
